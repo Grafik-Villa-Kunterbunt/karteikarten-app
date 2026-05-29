@@ -2,197 +2,190 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Hauptstädte — Karteikarten</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1410;
-    --bg-2: #161c17;
-    --ink: #f2ede3;
-    --ink-dim: #9ba397;
-    --accent: #d9a441;
-    --accent-2: #c2533a;
-    --card: #1c2420;
-    --border: rgba(242, 237, 227, 0.08);
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --text: #0f172a;
+    --text-secondary: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.08);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 20px 40px rgba(0,0,0,0.12);
+    --accent-correct: #10b981;
+    --accent-correct-soft: #d1fae5;
+    --accent-wrong: #ef4444;
+    --accent-wrong-soft: #fee2e2;
+    --accent-primary: #0f172a;
+    --radius: 20px;
+    --radius-sm: 12px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
   html, body {
     background: var(--bg);
-    color: var(--ink);
-    font-family: 'Fraunces', serif;
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
-  }
-
-  body {
-    background-image:
-      radial-gradient(circle at 15% 20%, rgba(217, 164, 65, 0.08), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(194, 83, 58, 0.06), transparent 45%);
-    background-attachment: fixed;
-  }
-
-  /* Grain overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 100;
-    opacity: 0.35;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    -webkit-font-smoothing: antialiased;
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 48px 32px 120px;
-    position: relative;
+    padding: 32px 20px 80px;
   }
 
   header {
     text-align: center;
-    margin-bottom: 48px;
-    position: relative;
+    margin-bottom: 32px;
   }
 
   .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.3em;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
   }
 
   h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-size: clamp(40px, 7vw, 84px);
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    font-variation-settings: "opsz" 144;
+    font-weight: 700;
+    font-size: clamp(28px, 7vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
   }
 
-  h1 em {
-    font-style: italic;
+  h1 span {
+    color: var(--text-secondary);
     font-weight: 400;
-    color: var(--accent);
   }
 
   .subtitle {
-    font-size: 16px;
-    color: var(--ink-dim);
-    margin-top: 20px;
-    font-style: italic;
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    line-height: 1.5;
   }
 
+  /* Controls */
   .controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
     align-items: center;
-    margin: 40px 0 24px;
-    padding: 20px;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 2px;
+    margin: 24px 0 20px;
   }
 
-  .btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 12px 20px;
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--border);
+  select, .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
     cursor: pointer;
     transition: all 0.2s ease;
-    border-radius: 2px;
-  }
-
-  .btn:hover {
-    background: var(--ink);
-    color: var(--bg);
-    border-color: var(--ink);
-  }
-
-  .btn.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--bg);
-  }
-
-  .btn.primary:hover {
-    background: var(--accent-2);
-    border-color: var(--accent-2);
-    color: var(--ink);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
   }
 
   select {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 12px 20px;
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    border-radius: 2px;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
   }
 
-  select option {
-    background: var(--bg-2);
-    color: var(--ink);
+  select:hover, .btn:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
   }
 
+  select:focus {
+    border-color: var(--text-secondary);
+    box-shadow: 0 0 0 3px rgba(15,23,42,0.08);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  /* Progress */
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent-primary);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  /* Stats */
   .stats {
     display: flex;
     justify-content: center;
-    gap: 48px;
-    margin-bottom: 40px;
-    font-family: 'JetBrains Mono', monospace;
+    gap: 32px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-label {
     font-size: 12px;
-    color: var(--ink-dim);
-    letter-spacing: 0.1em;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .stat-value {
-    font-family: 'Fraunces', serif;
-    font-size: 32px;
-    font-weight: 300;
-    color: var(--ink);
     display: block;
-    margin-top: 4px;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 2px;
+    line-height: 1.1;
   }
 
-  .stat-value.correct { color: var(--accent); }
-  .stat-value.wrong { color: var(--accent-2); }
+  .stat-value.correct { color: var(--accent-correct); }
+  .stat-value.wrong { color: var(--accent-wrong); }
 
-  /* Card */
+  /* Card Stage */
   .card-stage {
-    perspective: 2000px;
+    perspective: 1200px;
     display: flex;
     justify-content: center;
-    margin-bottom: 32px;
-    min-height: 420px;
+    margin-bottom: 28px;
   }
 
   .card {
     width: 100%;
-    max-width: 560px;
-    aspect-ratio: 4/3;
+    max-width: 480px;
+    aspect-ratio: 4 / 3;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
   }
 
@@ -203,52 +196,48 @@
     inset: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 40px;
+    border-radius: var(--radius);
+    padding: 36px 28px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow:
-      0 30px 60px -20px rgba(0,0,0,0.5),
-      0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow);
     overflow: hidden;
+    transition: box-shadow 0.3s ease;
   }
 
-  .card-face::before {
-    content: '';
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    border: 1px solid var(--border);
-    pointer-events: none;
-    border-radius: 2px;
+  .card:hover .card-face {
+    box-shadow: var(--shadow-hover);
   }
-
-  .card-back { transform: rotateY(180deg); }
 
   .card-back {
-    background: linear-gradient(135deg, var(--card) 0%, #241a12 100%);
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
   }
 
   .card-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
-    position: relative;
-    z-index: 1;
   }
 
   .card-label {
-    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+
+  .region-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg);
+    padding: 4px 12px;
+    border-radius: 100px;
   }
 
   .card-center {
@@ -258,176 +247,171 @@
     justify-content: center;
     flex: 1;
     text-align: center;
-    position: relative;
-    z-index: 1;
   }
 
   .flag {
-    font-size: 72px;
-    margin-bottom: 20px;
+    font-size: 64px;
+    margin-bottom: 16px;
     line-height: 1;
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
   }
 
   .country-name {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-size: clamp(32px, 6vw, 56px);
-    line-height: 1.05;
+    font-weight: 700;
+    font-size: clamp(26px, 6vw, 38px);
+    line-height: 1.15;
     letter-spacing: -0.02em;
-    font-variation-settings: "opsz" 144;
   }
 
   .capital-name {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(28px, 5vw, 48px);
-    color: var(--accent);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    font-size: clamp(24px, 5.5vw, 34px);
+    color: var(--text);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
   }
 
   .hint {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
     text-align: center;
-    position: relative;
-    z-index: 1;
   }
 
-  .region-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ink-dim);
+  .hint svg {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 4px;
+    opacity: 0.6;
   }
 
-  /* Action buttons */
+  /* Actions */
   .actions {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
   .action-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
     padding: 14px 28px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--ink);
+    border-radius: 100px;
+    border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-radius: 2px;
-    min-width: 140px;
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
+  .action-btn:active { transform: scale(0.97); }
+
   .action-btn.correct {
-    border-color: rgba(217, 164, 65, 0.4);
-    color: var(--accent);
+    background: var(--accent-correct-soft);
+    color: #065f46;
   }
   .action-btn.correct:hover {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
+    background: var(--accent-correct);
+    color: #fff;
   }
 
   .action-btn.wrong {
-    border-color: rgba(194, 83, 58, 0.4);
-    color: var(--accent-2);
+    background: var(--accent-wrong-soft);
+    color: #991b1b;
   }
   .action-btn.wrong:hover {
-    background: var(--accent-2);
-    color: var(--ink);
-    border-color: var(--accent-2);
+    background: var(--accent-wrong);
+    color: #fff;
   }
 
+  .action-btn.skip {
+    background: var(--surface);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+  }
   .action-btn.skip:hover {
-    background: var(--ink);
-    color: var(--bg);
-    border-color: var(--ink);
+    border-color: var(--text-secondary);
+    color: var(--text);
   }
 
-  /* Progress bar */
-  .progress-track {
-    height: 2px;
-    background: var(--border);
-    margin-bottom: 32px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-
-  /* Completed state */
+  /* Completed */
   .completed {
     text-align: center;
-    padding: 80px 20px;
+    padding: 60px 20px;
+  }
+
+  .completed-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    line-height: 1;
   }
 
   .completed h2 {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(40px, 6vw, 64px);
-    margin-bottom: 20px;
-    color: var(--accent);
+    font-weight: 700;
+    font-size: clamp(28px, 6vw, 40px);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
   }
 
   .completed p {
-    color: var(--ink-dim);
-    font-size: 18px;
-    margin-bottom: 40px;
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin-bottom: 6px;
+    line-height: 1.5;
   }
 
-  /* Flourish */
-  .flourish {
-    text-align: center;
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    color: var(--accent);
-    font-size: 24px;
-    margin: 16px 0;
-    letter-spacing: 0.2em;
+  .completed .btn.primary {
+    margin-top: 24px;
+    background: var(--accent-primary);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 100px;
+    box-shadow: 0 4px 14px rgba(15,23,42,0.25);
+  }
+  .completed .btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15,23,42,0.3);
   }
 
-  @media (max-width: 640px) {
-    .container { padding: 24px 16px 80px; }
-    .stats { gap: 24px; }
-    .card-face { padding: 28px 20px; }
-    .flag { font-size: 56px; }
-    .action-btn { min-width: 100px; padding: 12px 16px; }
-    .controls { padding: 14px; gap: 8px; }
-    .btn, select { padding: 10px 14px; font-size: 10px; }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .fade-in {
+    animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
 
-  .fade-in { animation: fadeIn 0.4s ease; }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  .pop { animation: pop 0.25s ease; }
+
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px 60px; }
+    .card-face { padding: 28px 20px; }
+    .flag { font-size: 52px; }
+    .stats { gap: 24px; }
+    .stat-value { font-size: 24px; }
+    .action-btn { min-width: 100px; padding: 12px 18px; font-size: 13px; }
+  }
 </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="eyebrow">Flashcards · Kapital · Geography</div>
-      <h1>Hauptstädte <em>der Welt</em></h1>
-      <div class="flourish">✦ · ✦ · ✦</div>
-      <p class="subtitle">195 Länder. Eine Karte zur Zeit. Denke nach, bevor du umdrehst.</p>
+      <div class="eyebrow">Lernen mit Karteikarten</div>
+      <h1>Hauptstädte <span>der Welt</span></h1>
+      <p class="subtitle">195 Länder. Eine Karte nach der anderen.</p>
     </header>
 
     <div class="controls">
@@ -449,16 +433,16 @@
     </div>
 
     <div class="stats">
-      <div>
-        Fortschritt
+      <div class="stat">
+        <span class="stat-label">Fortschritt</span>
         <span class="stat-value" id="progress">0 / 0</span>
       </div>
-      <div>
-        Gewusst
+      <div class="stat">
+        <span class="stat-label">Gewusst</span>
         <span class="stat-value correct" id="correctCount">0</span>
       </div>
-      <div>
-        Nicht gewusst
+      <div class="stat">
+        <span class="stat-label">Nicht gewusst</span>
         <span class="stat-value wrong" id="wrongCount">0</span>
       </div>
     </div>
@@ -468,38 +452,49 @@
         <div class="card" id="card">
           <div class="card-face card-front">
             <div class="card-meta">
-              <span class="card-label">◆ Land</span>
+              <span class="card-label">Land</span>
               <span class="region-tag" id="regionFront">—</span>
             </div>
             <div class="card-center">
               <div class="flag" id="flag">🌍</div>
               <div class="country-name" id="countryName">—</div>
             </div>
-            <div class="hint">Tippe zum Umdrehen</div>
+            <div class="hint">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3zM1 8a7 7 0 1 1 14 0A7 7 0 0 1 1 8z"/></svg>
+              Zum Umdrehen tippen
+            </div>
           </div>
           <div class="card-face card-back">
             <div class="card-meta">
-              <span class="card-label">◆ Hauptstadt</span>
+              <span class="card-label">Hauptstadt</span>
               <span class="region-tag" id="regionBack">—</span>
             </div>
             <div class="card-center">
               <div class="capital-name" id="capitalName">—</div>
             </div>
-            <div class="hint">Tippe zum Zurückdrehen</div>
+            <div class="hint">Zurückdrehen zum Weitermachen</div>
           </div>
         </div>
       </div>
 
       <div class="actions">
-        <button class="action-btn wrong" id="wrongBtn">✕ Nicht gewusst</button>
-        <button class="action-btn skip" id="skipBtn">→ Überspringen</button>
-        <button class="action-btn correct" id="correctBtn">✓ Gewusst</button>
+        <button class="action-btn wrong" id="wrongBtn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          Nicht gewusst
+        </button>
+        <button class="action-btn skip" id="skipBtn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          Überspringen
+        </button>
+        <button class="action-btn correct" id="correctBtn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          Gewusst
+        </button>
       </div>
     </div>
   </div>
 
 <script>
-// Komplette Länder-Hauptstadt-Liste mit Flaggen und Regionen
 const countries = [
   // Europa
   {c:"Deutschland",h:"Berlin",f:"🇩🇪",r:"Europa"},
@@ -753,7 +748,6 @@ function renderCard() {
   }
   const item = deck[currentIndex];
   card.classList.remove('flipped');
-  // Kleine Verzögerung, damit die Flip-Animation nicht mit dem neuen Inhalt kollidiert
   setTimeout(() => {
     flagEl.textContent = item.f;
     countryEl.textContent = item.c;
@@ -784,18 +778,18 @@ function showCompleted() {
   const total = deck.length;
   const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
   let message = 'Weiter so!';
-  if (percent >= 90) message = 'Ausgezeichnet! Weltklasse.';
-  else if (percent >= 70) message = 'Sehr gut gemacht.';
-  else if (percent >= 50) message = 'Solide Leistung.';
-  else message = 'Übung macht den Meister.';
+  if (percent >= 90) message = 'Hervorragend! Du bist ein Weltklasse-Geograph.';
+  else if (percent >= 70) message = 'Sehr gut gemacht!';
+  else if (percent >= 50) message = 'Solide Basis, mit etwas Übung wird das perfekt.';
+  else message = 'Nicht aufgeben — Übung macht den Meister!';
 
   container.innerHTML = `
     <div class="completed fade-in">
-      <div class="flourish">✦ · ✦ · ✦</div>
-      <h2>Vollendet</h2>
-      <p>${correct} von ${total} gewusst · ${percent}%</p>
-      <p style="font-style: italic; color: var(--accent);">${message}</p>
-      <button class="btn primary" onclick="location.reload()" style="margin-top:20px;">Nochmal spielen</button>
+      <div class="completed-icon">🎉</div>
+      <h2>Fertig!</h2>
+      <p><strong>${correct} von ${total}</strong> gewusst · ${percent}%</p>
+      <p>${message}</p>
+      <button class="btn primary" onclick="location.reload()">Nochmal spielen</button>
     </div>
   `;
   progressFill.style.width = '100%';
@@ -832,9 +826,9 @@ document.getElementById('shuffleBtn').addEventListener('click', () => {
 document.getElementById('resetBtn').addEventListener('click', initDeck);
 document.getElementById('regionFilter').addEventListener('change', initDeck);
 
-// Tastatur
+// Keyboard
 document.addEventListener('keydown', (e) => {
-  if (e.key === ' ') { e.preventDefault(); card.classList.toggle('flipped'); }
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); card.classList.toggle('flipped'); }
   else if (e.key === 'ArrowRight') next();
   else if (e.key === '1') { correct++; next(); }
   else if (e.key === '2') { wrong++; next(); }
