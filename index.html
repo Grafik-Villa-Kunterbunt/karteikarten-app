@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hauptstädte — Karteikarten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1410;
+    --bg-2: #161c17;
+    --ink: #f2ede3;
+    --ink-dim: #9ba397;
+    --accent: #d9a441;
+    --accent-2: #c2533a;
+    --card: #1c2420;
+    --border: rgba(242, 237, 227, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Fraunces', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(217, 164, 65, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(194, 83, 58, 0.06), transparent 45%);
+    background-attachment: fixed;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 32px 120px;
+    position: relative;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(40px, 7vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-variation-settings: "opsz" 144;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--ink-dim);
+    margin-top: 20px;
+    font-style: italic;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0 24px;
+    padding: 20px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+  }
+
+  .btn:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn.primary:hover {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: var(--ink);
+  }
+
+  select {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  select option {
+    background: var(--bg-2);
+    color: var(--ink);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-bottom: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--ink);
+    display: block;
+    margin-top: 4px;
+  }
+
+  .stat-value.correct { color: var(--accent); }
+  .stat-value.wrong { color: var(--accent-2); }
+
+  /* Card */
+  .card-stage {
+    perspective: 2000px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+    min-height: 420px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 4/3;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow:
+      0 30px 60px -20px rgba(0,0,0,0.5),
+      0 2px 4px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+
+  .card-face::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    border: 1px solid var(--border);
+    pointer-events: none;
+    border-radius: 2px;
+  }
+
+  .card-back { transform: rotateY(180deg); }
+
+  .card-back {
+    background: linear-gradient(135deg, var(--card) 0%, #241a12 100%);
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    position: relative;
+    z-index: 1;
+  }
+
+  .card-label {
+    color: var(--accent);
+  }
+
+  .card-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .flag {
+    font-size: 72px;
+    margin-bottom: 20px;
+    line-height: 1;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+  }
+
+  .country-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(32px, 6vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144;
+  }
+
+  .capital-name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--accent);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .region-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  /* Action buttons */
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+    min-width: 140px;
+  }
+
+  .action-btn.correct {
+    border-color: rgba(217, 164, 65, 0.4);
+    color: var(--accent);
+  }
+  .action-btn.correct:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+
+  .action-btn.wrong {
+    border-color: rgba(194, 83, 58, 0.4);
+    color: var(--accent-2);
+  }
+  .action-btn.wrong:hover {
+    background: var(--accent-2);
+    color: var(--ink);
+    border-color: var(--accent-2);
+  }
+
+  .action-btn.skip:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Completed state */
+  .completed {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .completed h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(40px, 6vw, 64px);
+    margin-bottom: 20px;
+    color: var(--accent);
+  }
+
+  .completed p {
+    color: var(--ink-dim);
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+
+  /* Flourish */
+  .flourish {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 24px;
+    margin: 16px 0;
+    letter-spacing: 0.2em;
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px 80px; }
+    .stats { gap: 24px; }
+    .card-face { padding: 28px 20px; }
+    .flag { font-size: 56px; }
+    .action-btn { min-width: 100px; padding: 12px 16px; }
+    .controls { padding: 14px; gap: 8px; }
+    .btn, select { padding: 10px 14px; font-size: 10px; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fadeIn 0.4s ease; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow">Flashcards · Kapital · Geography</div>
+      <h1>Hauptstädte <em>der Welt</em></h1>
+      <div class="flourish">✦ · ✦ · ✦</div>
+      <p class="subtitle">195 Länder. Eine Karte zur Zeit. Denke nach, bevor du umdrehst.</p>
+    </header>
+
+    <div class="controls">
+      <select id="regionFilter">
+        <option value="all">Alle Regionen</option>
+        <option value="Europa">Europa</option>
+        <option value="Asien">Asien</option>
+        <option value="Afrika">Afrika</option>
+        <option value="Nordamerika">Nordamerika</option>
+        <option value="Südamerika">Südamerika</option>
+        <option value="Ozeanien">Ozeanien</option>
+      </select>
+      <button class="btn" id="shuffleBtn">↻ Mischen</button>
+      <button class="btn" id="resetBtn">Neustart</button>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="stats">
+      <div>
+        Fortschritt
+        <span class="stat-value" id="progress">0 / 0</span>
+      </div>
+      <div>
+        Gewusst
+        <span class="stat-value correct" id="correctCount">0</span>
+      </div>
+      <div>
+        Nicht gewusst
+        <span class="stat-value wrong" id="wrongCount">0</span>
+      </div>
+    </div>
+
+    <div id="cardContainer">
+      <div class="card-stage">
+        <div class="card" id="card">
+          <div class="card-face card-front">
+            <div class="card-meta">
+              <span class="card-label">◆ Land</span>
+              <span class="region-tag" id="regionFront">—</span>
+            </div>
+            <div class="card-center">
+              <div class="flag" id="flag">🌍</div>
+              <div class="country-name" id="countryName">—</div>
+            </div>
+            <div class="hint">Tippe zum Umdrehen</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-meta">
+              <span class="card-label">◆ Hauptstadt</span>
+              <span class="region-tag" id="regionBack">—</span>
+            </div>
+            <div class="card-center">
+              <div class="capital-name" id="capitalName">—</div>
+            </div>
+            <div class="hint">Tippe zum Zurückdrehen</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="action-btn wrong" id="wrongBtn">✕ Nicht gewusst</button>
+        <button class="action-btn skip" id="skipBtn">→ Überspringen</button>
+        <button class="action-btn correct" id="correctBtn">✓ Gewusst</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Komplette Länder-Hauptstadt-Liste mit Flaggen und Regionen
+const countries = [
+  // Europa
+  {c:"Deutschland",h:"Berlin",f:"🇩🇪",r:"Europa"},
+  {c:"Frankreich",h:"Paris",f:"🇫🇷",r:"Europa"},
+  {c:"Italien",h:"Rom",f:"🇮🇹",r:"Europa"},
+  {c:"Spanien",h:"Madrid",f:"🇪🇸",r:"Europa"},
+  {c:"Portugal",h:"Lissabon",f:"🇵🇹",r:"Europa"},
+  {c:"Vereinigtes Königreich",h:"London",f:"🇬🇧",r:"Europa"},
+  {c:"Irland",h:"Dublin",f:"🇮🇪",r:"Europa"},
+  {c:"Niederlande",h:"Amsterdam",f:"🇳🇱",r:"Europa"},
+  {c:"Belgien",h:"Brüssel",f:"🇧🇪",r:"Europa"},
+  {c:"Luxemburg",h:"Luxemburg",f:"🇱🇺",r:"Europa"},
+  {c:"Schweiz",h:"Bern",f:"🇨🇭",r:"Europa"},
+  {c:"Österreich",h:"Wien",f:"🇦🇹",r:"Europa"},
+  {c:"Dänemark",h:"Kopenhagen",f:"🇩🇰",r:"Europa"},
+  {c:"Schweden",h:"Stockholm",f:"🇸🇪",r:"Europa"},
+  {c:"Norwegen",h:"Oslo",f:"🇳🇴",r:"Europa"},
+  {c:"Finnland",h:"Helsinki",f:"🇫🇮",r:"Europa"},
+  {c:"Island",h:"Reykjavík",f:"🇮🇸",r:"Europa"},
+  {c:"Polen",h:"Warschau",f:"🇵🇱",r:"Europa"},
+  {c:"Tschechien",h:"Prag",f:"🇨🇿",r:"Europa"},
+  {c:"Slowakei",h:"Bratislava",f:"🇸🇰",r:"Europa"},
+  {c:"Ungarn",h:"Budapest",f:"🇭🇺",r:"Europa"},
+  {c:"Rumänien",h:"Bukarest",f:"🇷🇴",r:"Europa"},
+  {c:"Bulgarien",h:"Sofia",f:"🇧🇬",r:"Europa"},
+  {c:"Griechenland",h:"Athen",f:"🇬🇷",r:"Europa"},
+  {c:"Albanien",h:"Tirana",f:"🇦🇱",r:"Europa"},
+  {c:"Nordmazedonien",h:"Skopje",f:"🇲🇰",r:"Europa"},
+  {c:"Serbien",h:"Belgrad",f:"🇷🇸",r:"Europa"},
+  {c:"Kroatien",h:"Zagreb",f:"🇭🇷",r:"Europa"},
+  {c:"Slowenien",h:"Ljubljana",f:"🇸🇮",r:"Europa"},
+  {c:"Bosnien und Herzegowina",h:"Sarajevo",f:"🇧🇦",r:"Europa"},
+  {c:"Montenegro",h:"Podgorica",f:"🇲🇪",r:"Europa"},
+  {c:"Kosovo",h:"Pristina",f:"🇽🇰",r:"Europa"},
+  {c:"Estland",h:"Tallinn",f:"🇪🇪",r:"Europa"},
+  {c:"Lettland",h:"Riga",f:"🇱🇻",r:"Europa"},
+  {c:"Litauen",h:"Vilnius",f:"🇱🇹",r:"Europa"},
+  {c:"Weißrussland",h:"Minsk",f:"🇧🇾",r:"Europa"},
+  {c:"Ukraine",h:"Kiew",f:"🇺🇦",r:"Europa"},
+  {c:"Moldau",h:"Chișinău",f:"🇲🇩",r:"Europa"},
+  {c:"Russland",h:"Moskau",f:"🇷🇺",r:"Europa"},
+  {c:"Malta",h:"Valletta",f:"🇲🇹",r:"Europa"},
+  {c:"Zypern",h:"Nikosia",f:"🇨🇾",r:"Europa"},
+  {c:"Andorra",h:"Andorra la Vella",f:"🇦🇩",r:"Europa"},
+  {c:"Monaco",h:"Monaco",f:"🇲🇨",r:"Europa"},
+  {c:"Liechtenstein",h:"Vaduz",f:"🇱🇮",r:"Europa"},
+  {c:"San Marino",h:"San Marino",f:"🇸🇲",r:"Europa"},
+  {c:"Vatikanstadt",h:"Vatikanstadt",f:"🇻🇦",r:"Europa"},
+
+  // Asien
+  {c:"China",h:"Peking",f:"🇨🇳",r:"Asien"},
+  {c:"Japan",h:"Tokio",f:"🇯🇵",r:"Asien"},
+  {c:"Südkorea",h:"Seoul",f:"🇰🇷",r:"Asien"},
+  {c:"Nordkorea",h:"Pjöngjang",f:"🇰🇵",r:"Asien"},
+  {c:"Mongolei",h:"Ulaanbaatar",f:"🇲🇳",r:"Asien"},
+  {c:"Indien",h:"Neu-Delhi",f:"🇮🇳",r:"Asien"},
+  {c:"Pakistan",h:"Islamabad",f:"🇵🇰",r:"Asien"},
+  {c:"Bangladesch",h:"Dhaka",f:"🇧🇩",r:"Asien"},
+  {c:"Sri Lanka",h:"Colombo",f:"🇱🇰",r:"Asien"},
+  {c:"Nepal",h:"Kathmandu",f:"🇳🇵",r:"Asien"},
+  {c:"Bhutan",h:"Thimphu",f:"🇧🇹",r:"Asien"},
+  {c:"Malediven",h:"Malé",f:"🇲🇻",r:"Asien"},
+  {c:"Afghanistan",h:"Kabul",f:"🇦🇫",r:"Asien"},
+  {c:"Iran",h:"Teheran",f:"🇮🇷",r:"Asien"},
+  {c:"Irak",h:"Bagdad",f:"🇮🇶",r:"Asien"},
+  {c:"Syrien",h:"Damaskus",f:"🇸🇾",r:"Asien"},
+  {c:"Libanon",h:"Beirut",f:"🇱🇧",r:"Asien"},
+  {c:"Jordanien",h:"Amman",f:"🇯🇴",r:"Asien"},
+  {c:"Israel",h:"Jerusalem",f:"🇮🇱",r:"Asien"},
+  {c:"Palästina",h:"Ramallah",f:"🇵🇸",r:"Asien"},
+  {c:"Saudi-Arabien",h:"Riad",f:"🇸🇦",r:"Asien"},
+  {c:"Jemen",h:"Sanaa",f:"🇾🇪",r:"Asien"},
+  {c:"Oman",h:"Maskat",f:"🇴🇲",r:"Asien"},
+  {c:"Vereinigte Arabische Emirate",h:"Abu Dhabi",f:"🇦🇪",r:"Asien"},
+  {c:"Katar",h:"Doha",f:"🇶🇦",r:"Asien"},
+  {c:"Bahrain",h:"Manama",f:"🇧🇭",r:"Asien"},
+  {c:"Kuwait",h:"Kuwait-Stadt",f:"🇰🇼",r:"Asien"},
+  {c:"Türkei",h:"Ankara",f:"🇹🇷",r:"Asien"},
+  {c:"Georgien",h:"Tiflis",f:"🇬🇪",r:"Asien"},
+  {c:"Armenien",h:"Jerewan",f:"🇦🇲",r:"Asien"},
+  {c:"Aserbaidschan",h:"Baku",f:"🇦🇿",r:"Asien"},
+  {c:"Kasachstan",h:"Astana",f:"🇰🇿",r:"Asien"},
+  {c:"Usbekistan",h:"Taschkent",f:"🇺🇿",r:"Asien"},
+  {c:"Turkmenistan",h:"Aşgabat",f:"🇹🇲",r:"Asien"},
+  {c:"Kirgisistan",h:"Bischkek",f:"🇰🇬",r:"Asien"},
+  {c:"Tadschikistan",h:"Duschanbe",f:"🇹🇯",r:"Asien"},
+  {c:"Thailand",h:"Bangkok",f:"🇹🇭",r:"Asien"},
+  {c:"Vietnam",h:"Hanoi",f:"🇻🇳",r:"Asien"},
+  {c:"Kambodscha",h:"Phnom Penh",f:"🇰🇭",r:"Asien"},
+  {c:"Laos",h:"Vientiane",f:"🇱🇦",r:"Asien"},
+  {c:"Myanmar",h:"Naypyidaw",f:"🇲🇲",r:"Asien"},
+  {c:"Malaysia",h:"Kuala Lumpur",f:"🇲🇾",r:"Asien"},
+  {c:"Singapur",h:"Singapur",f:"🇸🇬",r:"Asien"},
+  {c:"Indonesien",h:"Jakarta",f:"🇮🇩",r:"Asien"},
+  {c:"Philippinen",h:"Manila",f:"🇵🇭",r:"Asien"},
+  {c:"Brunei",h:"Bandar Seri Begawan",f:"🇧🇳",r:"Asien"},
+  {c:"Osttimor",h:"Dili",f:"🇹🇱",r:"Asien"},
+
+  // Afrika
+  {c:"Ägypten",h:"Kairo",f:"🇪🇬",r:"Afrika"},
+  {c:"Libyen",h:"Tripolis",f:"🇱🇾",r:"Afrika"},
+  {c:"Tunesien",h:"Tunis",f:"🇹🇳",r:"Afrika"},
+  {c:"Algerien",h:"Algier",f:"🇩🇿",r:"Afrika"},
+  {c:"Marokko",h:"Rabat",f:"🇲🇦",r:"Afrika"},
+  {c:"Sudan",h:"Khartum",f:"🇸🇩",r:"Afrika"},
+  {c:"Südsudan",h:"Juba",f:"🇸🇸",r:"Afrika"},
+  {c:"Äthiopien",h:"Addis Abeba",f:"🇪🇹",r:"Afrika"},
+  {c:"Eritrea",h:"Asmara",f:"🇪🇷",r:"Afrika"},
+  {c:"Dschibuti",h:"Dschibuti",f:"🇩🇯",r:"Afrika"},
+  {c:"Somalia",h:"Mogadischu",f:"🇸🇴",r:"Afrika"},
+  {c:"Kenia",h:"Nairobi",f:"🇰🇪",r:"Afrika"},
+  {c:"Uganda",h:"Kampala",f:"🇺🇬",r:"Afrika"},
+  {c:"Tansania",h:"Dodoma",f:"🇹🇿",r:"Afrika"},
+  {c:"Ruanda",h:"Kigali",f:"🇷🇼",r:"Afrika"},
+  {c:"Burundi",h:"Gitega",f:"🇧🇮",r:"Afrika"},
+  {c:"Demokratische Republik Kongo",h:"Kinshasa",f:"🇨🇩",r:"Afrika"},
+  {c:"Republik Kongo",h:"Brazzaville",f:"🇨🇬",r:"Afrika"},
+  {c:"Zentralafrikanische Republik",h:"Bangui",f:"🇨🇫",r:"Afrika"},
+  {c:"Tschad",h:"N'Djamena",f:"🇹🇩",r:"Afrika"},
+  {c:"Kamerun",h:"Yaoundé",f:"🇨🇲",r:"Afrika"},
+  {c:"Nigeria",h:"Abuja",f:"🇳🇬",r:"Afrika"},
+  {c:"Niger",h:"Niamey",f:"🇳🇪",r:"Afrika"},
+  {c:"Mali",h:"Bamako",f:"🇲🇱",r:"Afrika"},
+  {c:"Burkina Faso",h:"Ouagadougou",f:"🇧🇫",r:"Afrika"},
+  {c:"Senegal",h:"Dakar",f:"🇸🇳",r:"Afrika"},
+  {c:"Gambia",h:"Banjul",f:"🇬🇲",r:"Afrika"},
+  {c:"Guinea-Bissau",h:"Bissau",f:"🇬🇼",r:"Afrika"},
+  {c:"Guinea",h:"Conakry",f:"🇬🇳",r:"Afrika"},
+  {c:"Sierra Leone",h:"Freetown",f:"🇸🇱",r:"Afrika"},
+  {c:"Liberia",h:"Monrovia",f:"🇱🇷",r:"Afrika"},
+  {c:"Elfenbeinküste",h:"Yamoussoukro",f:"🇨🇮",r:"Afrika"},
+  {c:"Ghana",h:"Accra",f:"🇬🇭",r:"Afrika"},
+  {c:"Togo",h:"Lomé",f:"🇹🇬",r:"Afrika"},
+  {c:"Benin",h:"Porto-Novo",f:"🇧🇯",r:"Afrika"},
+  {c:"Mauretanien",h:"Nouakchott",f:"🇲🇷",r:"Afrika"},
+  {c:"Kap Verde",h:"Praia",f:"🇨🇻",r:"Afrika"},
+  {c:"São Tomé und Príncipe",h:"São Tomé",f:"🇸🇹",r:"Afrika"},
+  {c:"Äquatorialguinea",h:"Malabo",f:"🇬🇶",r:"Afrika"},
+  {c:"Gabun",h:"Libreville",f:"🇬🇦",r:"Afrika"},
+  {c:"Angola",h:"Luanda",f:"🇦🇴",r:"Afrika"},
+  {c:"Sambia",h:"Lusaka",f:"🇿🇲",r:"Afrika"},
+  {c:"Simbabwe",h:"Harare",f:"🇿🇼",r:"Afrika"},
+  {c:"Malawi",h:"Lilongwe",f:"🇲🇼",r:"Afrika"},
+  {c:"Mosambik",h:"Maputo",f:"🇲🇿",r:"Afrika"},
+  {c:"Madagaskar",h:"Antananarivo",f:"🇲🇬",r:"Afrika"},
+  {c:"Komoren",h:"Moroni",f:"🇰🇲",r:"Afrika"},
+  {c:"Seychellen",h:"Victoria",f:"🇸🇨",r:"Afrika"},
+  {c:"Mauritius",h:"Port Louis",f:"🇲🇺",r:"Afrika"},
+  {c:"Namibia",h:"Windhoek",f:"🇳🇦",r:"Afrika"},
+  {c:"Botswana",h:"Gaborone",f:"🇧🇼",r:"Afrika"},
+  {c:"Südafrika",h:"Pretoria",f:"🇿🇦",r:"Afrika"},
+  {c:"Lesotho",h:"Maseru",f:"🇱🇸",r:"Afrika"},
+  {c:"Eswatini",h:"Mbabane",f:"🇸🇿",r:"Afrika"},
+
+  // Nordamerika
+  {c:"Vereinigte Staaten",h:"Washington, D.C.",f:"🇺🇸",r:"Nordamerika"},
+  {c:"Kanada",h:"Ottawa",f:"🇨🇦",r:"Nordamerika"},
+  {c:"Mexiko",h:"Mexiko-Stadt",f:"🇲🇽",r:"Nordamerika"},
+  {c:"Guatemala",h:"Guatemala-Stadt",f:"🇬🇹",r:"Nordamerika"},
+  {c:"Belize",h:"Belmopan",f:"🇧🇿",r:"Nordamerika"},
+  {c:"El Salvador",h:"San Salvador",f:"🇸🇻",r:"Nordamerika"},
+  {c:"Honduras",h:"Tegucigalpa",f:"🇭🇳",r:"Nordamerika"},
+  {c:"Nicaragua",h:"Managua",f:"🇳🇮",r:"Nordamerika"},
+  {c:"Costa Rica",h:"San José",f:"🇨🇷",r:"Nordamerika"},
+  {c:"Panama",h:"Panama-Stadt",f:"🇵🇦",r:"Nordamerika"},
+  {c:"Kuba",h:"Havanna",f:"🇨🇺",r:"Nordamerika"},
+  {c:"Jamaika",h:"Kingston",f:"🇯🇲",r:"Nordamerika"},
+  {c:"Haiti",h:"Port-au-Prince",f:"🇭🇹",r:"Nordamerika"},
+  {c:"Dominikanische Republik",h:"Santo Domingo",f:"🇩🇴",r:"Nordamerika"},
+  {c:"Bahamas",h:"Nassau",f:"🇧🇸",r:"Nordamerika"},
+  {c:"Barbados",h:"Bridgetown",f:"🇧🇧",r:"Nordamerika"},
+  {c:"Trinidad und Tobago",h:"Port of Spain",f:"🇹🇹",r:"Nordamerika"},
+  {c:"Grenada",h:"St. George's",f:"🇬🇩",r:"Nordamerika"},
+  {c:"St. Lucia",h:"Castries",f:"🇱🇨",r:"Nordamerika"},
+  {c:"St. Vincent und die Grenadinen",h:"Kingstown",f:"🇻🇨",r:"Nordamerika"},
+  {c:"Antigua und Barbuda",h:"Saint John's",f:"🇦🇬",r:"Nordamerika"},
+  {c:"St. Kitts und Nevis",h:"Basseterre",f:"🇰🇳",r:"Nordamerika"},
+  {c:"Dominica",h:"Roseau",f:"🇩🇲",r:"Nordamerika"},
+
+  // Südamerika
+  {c:"Brasilien",h:"Brasília",f:"🇧🇷",r:"Südamerika"},
+  {c:"Argentinien",h:"Buenos Aires",f:"🇦🇷",r:"Südamerika"},
+  {c:"Chile",h:"Santiago de Chile",f:"🇨🇱",r:"Südamerika"},
+  {c:"Peru",h:"Lima",f:"🇵🇪",r:"Südamerika"},
+  {c:"Kolumbien",h:"Bogotá",f:"🇨🇴",r:"Südamerika"},
+  {c:"Venezuela",h:"Caracas",f:"🇻🇪",r:"Südamerika"},
+  {c:"Ecuador",h:"Quito",f:"🇪🇨",r:"Südamerika"},
+  {c:"Bolivien",h:"Sucre",f:"🇧🇴",r:"Südamerika"},
+  {c:"Paraguay",h:"Asunción",f:"🇵🇾",r:"Südamerika"},
+  {c:"Uruguay",h:"Montevideo",f:"🇺🇾",r:"Südamerika"},
+  {c:"Guyana",h:"Georgetown",f:"🇬🇾",r:"Südamerika"},
+  {c:"Suriname",h:"Paramaribo",f:"🇸🇷",r:"Südamerika"},
+
+  // Ozeanien
+  {c:"Australien",h:"Canberra",f:"🇦🇺",r:"Ozeanien"},
+  {c:"Neuseeland",h:"Wellington",f:"🇳🇿",r:"Ozeanien"},
+  {c:"Papua-Neuguinea",h:"Port Moresby",f:"🇵🇬",r:"Ozeanien"},
+  {c:"Fidschi",h:"Suva",f:"🇫🇯",r:"Ozeanien"},
+  {c:"Salomonen",h:"Honiara",f:"🇸🇧",r:"Ozeanien"},
+  {c:"Vanuatu",h:"Port Vila",f:"🇻🇺",r:"Ozeanien"},
+  {c:"Samoa",h:"Apia",f:"🇼🇸",r:"Ozeanien"},
+  {c:"Tonga",h:"Nukuʻalofa",f:"🇹🇴",r:"Ozeanien"},
+  {c:"Kiribati",h:"Tarawa",f:"🇰🇮",r:"Ozeanien"},
+  {c:"Tuvalu",h:"Funafuti",f:"🇹🇻",r:"Ozeanien"},
+  {c:"Nauru",h:"Yaren",f:"🇳🇷",r:"Ozeanien"},
+  {c:"Palau",h:"Ngerulmud",f:"🇵🇼",r:"Ozeanien"},
+  {c:"Mikronesien",h:"Palikir",f:"🇫🇲",r:"Ozeanien"},
+  {c:"Marshallinseln",h:"Majuro",f:"🇲🇭",r:"Ozeanien"}
+];
+
+let deck = [];
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+
+const card = document.getElementById('card');
+const flagEl = document.getElementById('flag');
+const countryEl = document.getElementById('countryName');
+const capitalEl = document.getElementById('capitalName');
+const regionFrontEl = document.getElementById('regionFront');
+const regionBackEl = document.getElementById('regionBack');
+const progressEl = document.getElementById('progress');
+const correctEl = document.getElementById('correctCount');
+const wrongEl = document.getElementById('wrongCount');
+const progressFill = document.getElementById('progressFill');
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function initDeck() {
+  const region = document.getElementById('regionFilter').value;
+  const filtered = region === 'all' ? countries : countries.filter(c => c.r === region);
+  deck = shuffleArray(filtered);
+  currentIndex = 0;
+  correct = 0;
+  wrong = 0;
+  renderCard();
+  updateStats();
+}
+
+function renderCard() {
+  if (currentIndex >= deck.length) {
+    showCompleted();
+    return;
+  }
+  const item = deck[currentIndex];
+  card.classList.remove('flipped');
+  // Kleine Verzögerung, damit die Flip-Animation nicht mit dem neuen Inhalt kollidiert
+  setTimeout(() => {
+    flagEl.textContent = item.f;
+    countryEl.textContent = item.c;
+    capitalEl.textContent = item.h;
+    regionFrontEl.textContent = item.r;
+    regionBackEl.textContent = item.r;
+    card.classList.add('fade-in');
+    setTimeout(() => card.classList.remove('fade-in'), 400);
+  }, 300);
+  updateStats();
+}
+
+function updateStats() {
+  progressEl.textContent = `${currentIndex} / ${deck.length}`;
+  correctEl.textContent = correct;
+  wrongEl.textContent = wrong;
+  const pct = deck.length > 0 ? (currentIndex / deck.length) * 100 : 0;
+  progressFill.style.width = pct + '%';
+}
+
+function next() {
+  currentIndex++;
+  renderCard();
+}
+
+function showCompleted() {
+  const container = document.getElementById('cardContainer');
+  const total = deck.length;
+  const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+  let message = 'Weiter so!';
+  if (percent >= 90) message = 'Ausgezeichnet! Weltklasse.';
+  else if (percent >= 70) message = 'Sehr gut gemacht.';
+  else if (percent >= 50) message = 'Solide Leistung.';
+  else message = 'Übung macht den Meister.';
+
+  container.innerHTML = `
+    <div class="completed fade-in">
+      <div class="flourish">✦ · ✦ · ✦</div>
+      <h2>Vollendet</h2>
+      <p>${correct} von ${total} gewusst · ${percent}%</p>
+      <p style="font-style: italic; color: var(--accent);">${message}</p>
+      <button class="btn primary" onclick="location.reload()" style="margin-top:20px;">Nochmal spielen</button>
+    </div>
+  `;
+  progressFill.style.width = '100%';
+}
+
+// Events
+card.addEventListener('click', () => {
+  card.classList.toggle('flipped');
+});
+
+document.getElementById('correctBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  correct++;
+  next();
+});
+
+document.getElementById('wrongBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  wrong++;
+  next();
+});
+
+document.getElementById('skipBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  next();
+});
+
+document.getElementById('shuffleBtn').addEventListener('click', () => {
+  deck = shuffleArray(deck.slice(currentIndex));
+  currentIndex = 0;
+  renderCard();
+});
+
+document.getElementById('resetBtn').addEventListener('click', initDeck);
+document.getElementById('regionFilter').addEventListener('change', initDeck);
+
+// Tastatur
+document.addEventListener('keydown', (e) => {
+  if (e.key === ' ') { e.preventDefault(); card.classList.toggle('flipped'); }
+  else if (e.key === 'ArrowRight') next();
+  else if (e.key === '1') { correct++; next(); }
+  else if (e.key === '2') { wrong++; next(); }
+});
+
+initDeck();
+</script>
+</body>
+</html>
